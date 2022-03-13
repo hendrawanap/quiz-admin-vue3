@@ -24,7 +24,7 @@ export default ({ store }) => {
 
   router.beforeEach((to, from) => {
     if (!store.state.isLoggedIn && to.name !== 'login') {
-      return { name: 'login' };
+      return { path: '/login', query: { redirect: to.path } };
     }
   });
 

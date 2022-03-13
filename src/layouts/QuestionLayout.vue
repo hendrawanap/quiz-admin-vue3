@@ -11,7 +11,7 @@ const onImgChange = (e) => {
 };
 
 onUpdated(() => {
-  img.value = props.question.img;
+  img.value = img.value || props.question.img;
 });
 </script>
 

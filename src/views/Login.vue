@@ -1,28 +1,32 @@
 <script setup>
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 const emit = defineEmits(['error']);
 const router = useRouter();
+const route = useRoute();
 const store = useStore();
 const state = reactive({
   email: '',
   password: '',
+  isLoading: false,
 });
 
 (async () => {
   await store.dispatch('checkIsLoggedIn');
   if (store.state.isLoggedIn) {
-    router.push('/');
+    router.push(route.query.redirect || '/');
   }
 })();
 
 const login = async () => {
   try {
+    state.isLoading = true;
     await store.dispatch('signInWithEmail', { email: state.email, password: state.password });
-    router.push('/');
+    router.push(route.query.redirect || '/');
   } catch (error) {
+    state.isLoading = false;
     emit('error', { message: error.message });
   }
 };
@@ -48,7 +52,13 @@ const login = async () => {
         name="password"
         id="input-password"
       >
-      <button class="btn bg-primary btn-lg mt-5 mb-5" type="submit">Login</button>
+      <button
+        class="btn bg-primary btn-lg mt-5 mb-5 disabled:bg-opacity-50"
+        type="submit"
+        :disabled="state.isLoading"
+      >
+        {{ state.isLoading ? 'Logging In...' : 'Login' }}
+      </button>
     </form>
   </div>
 </template>
