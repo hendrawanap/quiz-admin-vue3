@@ -1,19 +1,26 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
 const isLoggedIn = computed(() => store.state.isLoggedIn);
-const errorOccured = ref(false);
-const errorMessage = ref(null);
+const state = reactive({
+  errorOccured: false,
+  successOccured: false,
+  alertMessage: '',
+});
+const dismissAlert = () => {
+  state.errorOccured = false;
+  state.successOccured = false;
+}
 </script>
 
 <template>
   <div>
     <header class="sticky top-0 z-10">
-      <div v-show="errorOccured" class="text-center w-full bg-danger">
-        {{ errorMessage || 'An error occured.'}}
-        <span class="underline cursor-pointer" @click="errorOccured = false">Dismiss</span>
+      <div v-show="state.errorOccured || state.successOccured" class="text-center w-full bg-danger">
+        {{ state.alertMessage || 'An error occured.'}}
+        <span class="underline cursor-pointer" @click="state.errorOccured = false">Dismiss</span>
       </div>
       <template v-if="$route.name !== 'login'">
         <nav
@@ -32,9 +39,10 @@ const errorMessage = ref(null);
     </header>
     <router-view
       @error=" ({ message }) => {
-        errorOccured = true;
-        errorMessage = message;
+        state.errorOccured = true;
+        state.alertMessage = message;
       }"
+      @dismiss="dismissAlert"
     />
   </div>
 </template>

@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
-const emit = defineEmits(['error']);
+const emit = defineEmits(['error', 'dismiss']);
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
@@ -24,6 +24,7 @@ const login = async () => {
   try {
     state.isLoading = true;
     await store.dispatch('signInWithEmail', { email: state.email, password: state.password });
+    emit('dismiss');
     router.push(route.query.redirect || '/');
   } catch (error) {
     state.isLoading = false;
