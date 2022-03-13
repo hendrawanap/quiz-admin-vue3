@@ -1,13 +1,30 @@
 <script setup>
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
+const emit = defineEmits(['error']);
 const router = useRouter();
 const store = useStore();
+const state = reactive({
+  email: '',
+  password: '',
+});
 
-const login = () => {
-  store.commit('login');
-  router.push('/');
+(async () => {
+  await store.dispatch('checkIsLoggedIn');
+  if (store.state.isLoggedIn) {
+    router.push('/');
+  }
+})();
+
+const login = async () => {
+  try {
+    await store.dispatch('signInWithEmail', { email: state.email, password: state.password });
+    router.push('/');
+  } catch (error) {
+    emit('error', { message: error.message });
+  }
 };
 </script>
 
@@ -17,6 +34,7 @@ const login = () => {
     <form class="flex flex-col" @submit.prevent="login">
       <label class="font-medium mb-1" for="input-email">Email address</label>
       <input
+        v-model="state.email"
         class="bg-white bg-opacity-5 rounded mb-3 py-3 px-4"
         type="email"
         name="email"
@@ -24,6 +42,7 @@ const login = () => {
       >
       <label class="font-medium mb-1" for="input-password">Password</label>
       <input
+        v-model="state.password"
         class="bg-white bg-opacity-5 rounded mb-3 py-3 px-4"
         type="password"
         name="password"

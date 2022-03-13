@@ -22,9 +22,11 @@ if (!store.state.isFetchedAll) {
   store.dispatch('fetchQuestions')
     .then(() => { state.isLoading = false; })
     .catch((error) => {
-      emit('error', { message: `Failed to fetch questions list (${error.response.status}).` });
+      emit('error', { message: `Failed to fetch questions list (${error}).` });
       state.isLoading = false;
     });
+} else {
+  state.isLoading = false;
 }
 
 const questions = computed(() => {
@@ -37,7 +39,7 @@ const questions = computed(() => {
 const buttonRef = ref(null);
 const textRef = ref(null);
 const iconRef = ref(null);
-const printTarget = (e) => {
+const closeTopic = (e) => {
   if (!(e.target === buttonRef.value || e.target === textRef.value || e.target === iconRef.value)) {
     state.isOpenTopic = false;
   }
@@ -45,7 +47,7 @@ const printTarget = (e) => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 mt-4" @click="printTarget">
+  <div class="max-w-7xl mx-auto px-4 mt-4" @click="closeTopic">
     <h1 class="text-2xl font-bold mb-4">Questions List</h1>
     <div class="flex justify-between">
       <div class="relative max-w-max" ref="topicSelector">

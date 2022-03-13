@@ -4,14 +4,12 @@ import QuestionEdit from '../views/QuestionEdit.vue';
 import QuestionCreate from '../views/QuestionCreate.vue';
 import Login from '../views/Login.vue';
 import Page404 from '../views/Page404.vue';
+import Logout from '../views/Logout.vue';
 
 export default ({ store }) => {
-  const logout = {
-    template: '<div>Logging Out...{{$router.push(\'/login\')}}</div>',
-  };
   const routes = [
     { path: '/', redirect: '/home' },
-    { path: '/logout', redirect: '/login', component: logout },
+    { path: '/logout', component: Logout },
     { name: 'home', path: '/home', component: Home },
     { name: 'questionEdit', path: '/edit/:id', component: QuestionEdit },
     { name: 'questionCreate', path: '/create', component: QuestionCreate },
