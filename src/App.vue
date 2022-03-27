@@ -12,15 +12,19 @@ const state = reactive({
 const dismissAlert = () => {
   state.errorOccured = false;
   state.successOccured = false;
-}
+};
 </script>
 
 <template>
   <div>
     <header class="sticky top-0 z-10">
-      <div v-show="state.errorOccured || state.successOccured" class="text-center w-full bg-danger">
+      <div
+        v-show="state.errorOccured || state.successOccured"
+        class="text-center w-full"
+        :class="state.errorOccured ? 'bg-danger' : 'bg-success'"
+      >
         {{ state.alertMessage || 'An error occured.'}}
-        <span class="underline cursor-pointer" @click="state.errorOccured = false">Dismiss</span>
+        <span class="underline cursor-pointer" @click="dismissAlert">Dismiss</span>
       </div>
       <template v-if="$route.name !== 'login'">
         <nav
@@ -38,8 +42,12 @@ const dismissAlert = () => {
       </template>
     </header>
     <router-view
-      @error=" ({ message }) => {
+      @error="({ message }) => {
         state.errorOccured = true;
+        state.alertMessage = message;
+      }"
+      @success="({ message }) => {
+        state.successOccured = true;
         state.alertMessage = message;
       }"
       @dismiss="dismissAlert"
