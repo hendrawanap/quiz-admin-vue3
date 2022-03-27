@@ -18,7 +18,7 @@ const state = reactive({
 });
 const emit = defineEmits(['error']);
 
-if (!store.state.isFetchedAll) {
+if (!store.state.questions.isFetchedAll) {
   store.dispatch('fetchQuestions')
     .then(() => { state.isLoading = false; })
     .catch((error) => {
