@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 import QuestionCard from '../components/QuestionCard.vue';
 import QuestionCardSkeleton from '../components/skeletons/QuestionCard.vue';
+import Modal from '../components/Modal.vue';
 
 const TOPICS = {
   ALL: 'Semua',
@@ -16,15 +17,21 @@ const state = reactive({
   isOpenTopic: false,
   isLoading: true,
 });
-const emit = defineEmits(['error']);
+const emit = defineEmits(['error', 'toggleModal', 'success']);
+
+const fetchQuestions = async () => {
+  state.isLoading = true;
+  try {
+    await store.dispatch('fetchQuestions');
+    state.isLoading = false;
+  } catch (error) {
+    emit('error', { message: `Failed to fetch questions list (${error}).` });
+    state.isLoading = false;
+  }
+};
 
 if (!store.state.questions.isFetchedAll) {
-  store.dispatch('fetchQuestions')
-    .then(() => { state.isLoading = false; })
-    .catch((error) => {
-      emit('error', { message: `Failed to fetch questions list (${error}).` });
-      state.isLoading = false;
-    });
+  fetchQuestions();
 } else {
   state.isLoading = false;
 }
@@ -42,6 +49,25 @@ const iconRef = ref(null);
 const closeTopic = (e) => {
   if (!(e.target === buttonRef.value || e.target === textRef.value || e.target === iconRef.value)) {
     state.isOpenTopic = false;
+  }
+};
+
+const modalIsOpen = ref(false);
+
+const toggleModal = () => {
+  modalIsOpen.value = !modalIsOpen.value;
+};
+
+const selectedQuestion = ref(null);
+const deleteQuestion = async (id) => {
+  try {
+    const result = await store.dispatch('deleteQuestion', { id });
+    emit('success', { message: result });
+    toggleModal();
+    fetchQuestions();
+  } catch (error) {
+    emit('error', { message: `Failed to fetch questions list (${error}).` });
+    toggleModal();
   }
 };
 </script>
@@ -90,8 +116,40 @@ const closeTopic = (e) => {
         :hide-button="false"
         :key="question.id"
         @change-topic="() => state.selectedTopic = question.topic"
+        @delete="() => {
+          selectedQuestion = question;
+          toggleModal();
+        }"
       />
       <QuestionCardSkeleton v-show="state.isLoading" v-for="i in 3" :key="'loading-'+i"/>
     </div>
+    <Modal :is-open="modalIsOpen" @toggle-modal="toggleModal">
+      <div v-if="selectedQuestion" class="bg-dark-bg rounded-md">
+        <div class="border-b border-white border-opacity-5 p-5 mb-5">
+          <h4 class="font-semibold text-lg">Delete this question?</h4>
+        </div>
+        <QuestionCard
+          :question="selectedQuestion"
+          :hide-button="true"
+          class="max-w-xs mx-auto"
+        />
+        <div
+          class="border-t border-white border-opacity-5 p-5 mt-5 flex justify-end"
+        >
+          <button
+            class="btn btn-base bg-white bg-opacity-20 hover:bg-opacity-10"
+            @click.stop="toggleModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-base bg-danger ml-2"
+            @click="() => deleteQuestion(selectedQuestion.id)"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>

@@ -37,7 +37,7 @@ const topicClass = [`text-${topicColor}`, `bg-${topicColor}`];
 
 <template>
   <div
-    class="border border-white border-opacity-5 rounded-lg bg-white bg-opacity-5"
+    class="border border-white border-opacity-5 rounded-lg bg-white bg-opacity-5 flex flex-col"
   >
     <img
       :src="
@@ -48,7 +48,7 @@ const topicClass = [`text-${topicColor}`, `bg-${topicColor}`];
       alt="img"
       class="object-cover h-48 w-full rounded-t-lg"
     />
-    <div class="border-t border-white border-opacity-5 p-3 flex flex-col">
+    <div class="border-t border-white border-opacity-5 p-3 flex flex-col flex-1 justify-between">
       <div>
         <h5 class="text-lg font-semibold leading-snug">
           {{ question.question }}
@@ -65,7 +65,7 @@ const topicClass = [`text-${topicColor}`, `bg-${topicColor}`];
           {{ choice }}
         </h6>
       </div>
-      <div class="flex items-center justify-between mt-2" v-if="!hideButton">
+      <div class="flex items-center justify-between mt-4" v-if="!hideButton">
         <div>
           <router-link :to="'/edit/' + question.id">
             <button class="btn btn-base bg-primary mr-1">

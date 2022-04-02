@@ -51,6 +51,11 @@ const store = ({ getCurrentUserIdToken }) => ({
       const data = await UpdateQuestion({ token: userToken, formData, id });
       return data;
     },
+    deleteQuestion: async ({ commit }, { id }) => {
+      const userToken = await getCurrentUserIdToken();
+      const data = await DeleteQuestion({ token: userToken, id });
+      return data;
+    },
   },
 });
 
