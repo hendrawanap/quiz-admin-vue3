@@ -14,12 +14,12 @@ const initAuth = async () => {
     return user.getIdToken();
   };
   const logout = () => signOut(auth);
-  const getCurentUserIdToken = () => auth.currentUser.getIdToken();
+  const getCurrentUserIdToken = () => auth.currentUser.getIdToken();
 
   return {
     signInWithEmail,
     logout,
-    getCurentUserIdToken,
+    getCurrentUserIdToken,
   };
 };
 

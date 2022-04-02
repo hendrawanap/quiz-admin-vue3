@@ -1,14 +1,12 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
-import { useStore } from 'vuex';
+import { reactive } from 'vue';
 
-const store = useStore();
-const isLoggedIn = computed(() => store.state.isLoggedIn);
 const state = reactive({
   errorOccured: false,
   successOccured: false,
   alertMessage: '',
 });
+
 const dismissAlert = () => {
   state.errorOccured = false;
   state.successOccured = false;
@@ -41,16 +39,22 @@ const dismissAlert = () => {
         <h2>Quiz Admin</h2>
       </template>
     </header>
-    <router-view
-      @error="({ message }) => {
-        state.errorOccured = true;
-        state.alertMessage = message;
-      }"
-      @success="({ message }) => {
-        state.successOccured = true;
-        state.alertMessage = message;
-      }"
-      @dismiss="dismissAlert"
-    />
+    <main>
+      <router-view
+        @error="({ message = 'Error occured.' }) => {
+          state.errorOccured = true;
+          state.alertMessage = message;
+        }"
+        @success="({ message = 'Success.' }) => {
+          state.successOccured = true;
+          state.alertMessage = message;
+        }"
+        @dismiss="dismissAlert"
+      />
+    </main>
+    <footer class="py-10 w-full bg-white bg-opacity-5 mt-5 text-center">
+      <p class="text-white text-opacity-80">Built by Hendrawan Anantha</p>
+      <p class="text-white text-opacity-50 text-sm">Updated on March 2022</p>
+    </footer>
   </div>
 </template>

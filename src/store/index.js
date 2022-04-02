@@ -4,11 +4,11 @@ import initAuth from '../auth';
 import questionsModule from './questions';
 
 export default async () => {
-  const { signInWithEmail, logout, getCurentUserIdToken } = await initAuth();
+  const { signInWithEmail, logout, getCurrentUserIdToken } = await initAuth();
 
   const store = createStore({
     modules: {
-      questions: questionsModule({ getCurentUserIdToken }),
+      questions: questionsModule({ getCurrentUserIdToken }),
     },
     state: {
       isLoggedIn: false,
@@ -22,7 +22,7 @@ export default async () => {
     actions: {
       checkIsLoggedIn: async ({ commit }) => {
         try {
-          await getCurentUserIdToken();
+          await getCurrentUserIdToken();
           commit('setIsLoggedIn', { isLoggedIn: true });
         } catch (error) {
           commit('setIsLoggedIn', { isLoggedIn: false });
